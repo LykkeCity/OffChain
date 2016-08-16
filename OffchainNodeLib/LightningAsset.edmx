@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="AssetLightningModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="PreGeneratedOutput">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="OutputNumber" />
+          </Key>
+          <Property Name="TransactionId" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="OutputNumber" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="bigint" Nullable="false" />
+          <Property Name="PrivateKey" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Consumed" Type="int" Nullable="false" />
+          <Property Name="Script" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="AssetId" Type="varchar" MaxLength="100" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="Network" Type="varchar" MaxLength="10" />
+          <Property Name="Version" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Session">
+          <Key>
+            <PropertyRef Name="SessionId" />
+          </Key>
+          <Property Name="SessionId" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreationDatetime" Type="datetime" Nullable="false" />
+          <Property Name="PubKey" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Asset" Type="varchar" MaxLength="50" />
+          <Property Name="RequestedAmount" Type="float" />
+          <Property Name="Tolerance" Type="float" />
+          <Property Name="ContributedAmount" Type="float" />
+          <Property Name="Network" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="AssetLightningModelStoreContainer">
+          <EntitySet Name="PreGeneratedOutput" EntityType="Self.PreGeneratedOutput" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Lykke.OffchainNodeLib" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="PreGeneratedOutput">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="OutputNumber" />
+          </Key>
+          <Property Name="TransactionId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="OutputNumber" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Int64" Nullable="false" />
+          <Property Name="PrivateKey" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Consumed" Type="Int32" Nullable="false" />
+          <Property Name="Script" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AssetId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Network" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Version" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="Session">
+          <Key>
+            <PropertyRef Name="SessionId" />
+          </Key>
+          <Property Name="SessionId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CreationDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PubKey" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Asset" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RequestedAmount" Type="Double" />
+          <Property Name="Tolerance" Type="Double" />
+          <Property Name="ContributedAmount" Type="Double" />
+          <Property Name="Network" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="AssetLightningEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PreGeneratedOutputs" EntityType="Self.PreGeneratedOutput" />
+          <EntitySet Name="Sessions" EntityType="Self.Session" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AssetLightningModelStoreContainer" CdmEntityContainer="AssetLightningEntities">
+          <EntitySetMapping Name="PreGeneratedOutputs">
+            <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.PreGeneratedOutput">
+              <MappingFragment StoreEntitySet="PreGeneratedOutput">
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="OutputNumber" ColumnName="OutputNumber" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PrivateKey" ColumnName="PrivateKey" />
+                <ScalarProperty Name="Consumed" ColumnName="Consumed" />
+                <ScalarProperty Name="Script" ColumnName="Script" />
+                <ScalarProperty Name="AssetId" ColumnName="AssetId" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Network" ColumnName="Network" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sessions">
+            <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.Session">
+              <MappingFragment StoreEntitySet="Session">
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="CreationDatetime" ColumnName="CreationDatetime" />
+                <ScalarProperty Name="PubKey" ColumnName="PubKey" />
+                <ScalarProperty Name="Asset" ColumnName="Asset" />
+                <ScalarProperty Name="RequestedAmount" ColumnName="RequestedAmount" />
+                <ScalarProperty Name="Tolerance" ColumnName="Tolerance" />
+                <ScalarProperty Name="ContributedAmount" ColumnName="ContributedAmount" />
+                <ScalarProperty Name="Network" ColumnName="Network" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

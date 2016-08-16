@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OffchainGUI", "OffchainGUI\OffchainGUI.csproj", "{A2E1EDB5-133C-4FA0-8C73-43D4E28E7A90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OffchainNodeLib", "OffchainNodeLib\OffchainNodeLib.csproj", "{636A1A82-6150-443F-B952-113315AD157A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2E1EDB5-133C-4FA0-8C73-43D4E28E7A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E1EDB5-133C-4FA0-8C73-43D4E28E7A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E1EDB5-133C-4FA0-8C73-43D4E28E7A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E1EDB5-133C-4FA0-8C73-43D4E28E7A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{636A1A82-6150-443F-B952-113315AD157A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636A1A82-6150-443F-B952-113315AD157A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636A1A82-6150-443F-B952-113315AD157A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636A1A82-6150-443F-B952-113315AD157A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
