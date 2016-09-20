@@ -1,4 +1,4 @@
-﻿using AustinHarris.JsonRpc;
+﻿using Microsoft.Owin.Hosting;
 using NBitcoin;
 using Newtonsoft.Json;
 using System;
@@ -10,17 +10,39 @@ using System.Threading.Tasks;
 
 namespace Lykke.OffchainNodeLib
 {
-    public class Node : JsonRpcService
+    //public class Node : JsonRpcService
+    public class Node
     {
         NodeSettings settings = null;
+        IDisposable webApp = null;
+        IDisposable rpcWebApp = null;
+
         public Node(NodeSettings settings)
         {
             this.settings = settings;
         }
 
+        public void OwinListen()
+        {
+            webApp = WebApp.Start<Startup>(settings.RestEndPoint);
+            rpcWebApp = WebApp.Start<RPCStartup>(settings.RPCRestEndPoint);
+        }
+
+        public void OwinStopListening()
+        {
+            if(webApp != null)
+            {
+                webApp.Dispose();
+                webApp = null;
+                rpcWebApp.Dispose();
+                rpcWebApp = null;
+            }
+        }
+         
+        /*
         public void Listen()
         {
-            if(!settings.IsListener)
+            if (!settings.IsListener)
             {
                 throw new OffchainException("Node is not configured in Listener mode.");
             }
@@ -45,7 +67,7 @@ namespace Lykke.OffchainNodeLib
                 JsonRpcProcessor.Process(async, writer);
             });
         }
-
+        */
         /*
         private string Hello(string myPublicKey, string network, string randomMessage, string randomMessageSignature)
         {

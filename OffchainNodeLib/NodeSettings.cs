@@ -45,5 +45,17 @@ namespace Lykke.OffchainNodeLib
             get;
             set;
         }
+
+        public string RestEndPoint
+        {
+            get;
+            set;
+        }
+
+        public string RPCRestEndPoint
+        {
+            get;
+            set;
+        }
     }
 }

@@ -1,26 +1,15 @@
-﻿using NBitcoin;
+﻿using Lykke.OffchainNodeLib;
+using NBitcoin;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static OffchainGUI.OpenAssetsHelper;
-using PrimS.Telnet;
-using Newtonsoft.Json;
-using System.Text.RegularExpressions;
-using System.Data.Linq;
-using System.Windows.Threading;
-using System.Security.Cryptography;
+using OffchainNodeLib;
 
 namespace OffchainGUI
 {
@@ -29,12 +18,18 @@ namespace OffchainGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        Node node = null; 
+
         private static ChannelState channelState = ChannelState.Reset;
         public MainWindow()
         {
             InitializeComponent();
 
             LoadTabContents();
+
+            NodeSettings settings = new NodeSettings { RestEndPoint = "http://localhost:8787", RPCRestEndPoint = "http://localhost:8788" };
+            node = new Node(settings);
+            node.OwinListen();
         }
 
         private static Settings settings = new Settings();
@@ -401,23 +396,9 @@ namespace OffchainGUI
             }
         }
 
-        private bool ChannelShouldBe(OffchainGUI.ChannelState channelState)
-        {
-            if (MainWindow.channelState != channelState)
-            {
-                var message = String.Format("Channel should be in {0} state."
-                    , channelState.ToString());
-                ShowError(message);
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
         private async void buttonSayHello_Click(object sender, RoutedEventArgs e)
         {
+        /*    
             if (!ChannelShouldBe(ChannelState.Reset))
             {
                 return;
@@ -462,12 +443,14 @@ namespace OffchainGUI
             }
             var deserializedReply = JsonConvert.DeserializeObject<JSONResponse>(helloReply);
             textBoxChannelSessionNumber.SetTextBoxValueSafely(Dispatcher, JsonConvert.DeserializeObject<HelloReply>(deserializedReply.result).SessionNumber);
-
+            */
             channelState = ChannelState.HelloFinished;
         }
-
+        
+        /*
         private static async Task<string> CreateAndSendJsonRequest(string requestName, string[] parameters)
         {
+            
             JSONRequest request = new JSONRequest();
             request.id = 1;
             request.method = requestName;
@@ -489,8 +472,10 @@ namespace OffchainGUI
             }
 
             return reply;
+            
+            return null;
         }
-
+        */
         private void buttonReset_Click(object sender, RoutedEventArgs e)
         {
             channelState = ChannelState.Reset;
@@ -508,6 +493,7 @@ namespace OffchainGUI
 
         private async void buttonNegotiateChannel_Click(object sender, RoutedEventArgs e)
         {
+            /*
             float requestedAmount = 0;
             float contributedAmount = 0;
             float tolerancePercentage = 0;
@@ -579,12 +565,13 @@ namespace OffchainGUI
             {
                 textBoxNegotiateResult.SetTextBoxValueSafely(Dispatcher, deserializedReply.result.Result.ToString());
             }
-
+            */
             channelState = ChannelState.NegotiateChannelFinished;
         }
 
         private async void buttonCreateBaseTransaction_Click(object sender, RoutedEventArgs e)
         {
+            /*
             if (!ChannelShouldBe(ChannelState.NegotiateChannelFinished))
             {
                 return;
@@ -654,7 +641,7 @@ namespace OffchainGUI
             {
                 textBoxCreateBaseTransactionHex.Text = jsonReply.TransactionHex;
             }
-
+            */
             channelState = ChannelState.CreateBaseTransacionFinished;
         }
 
