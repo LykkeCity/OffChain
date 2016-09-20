@@ -48,6 +48,12 @@ namespace Lykke.OffchainNodeLib.RPC
             get;
             set;
         }
+
+        public string CounterPartyUrl
+        {
+            get;
+            set;
+        }
     }
 
     public class Control : LightNodeContract
@@ -66,10 +72,9 @@ namespace Lykke.OffchainNodeLib.RPC
             set;
         }
 
-        public Control(string counterPartyUrl)
+        public Control()
         {
             Channels = new Dictionary<Guid, Channel>();
-            CounterPartyUrl = counterPartyUrl;
         }
 
         private bool ChannelShouldBe(Guid channelId, ChannelState channelState)
@@ -133,7 +138,7 @@ namespace Lykke.OffchainNodeLib.RPC
             }
             else
             {
-                using (NodeClient client = new NodeClient(CounterPartyUrl))
+                using (NodeClient client = new NodeClient(Channels[guid].CounterPartyUrl))
                 {
                     return await client.NegociateChannel(Channels[guid], assetId, amount);
                 }

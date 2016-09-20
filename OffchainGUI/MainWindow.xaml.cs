@@ -26,10 +26,6 @@ namespace OffchainGUI
             InitializeComponent();
 
             LoadTabContents();
-
-            NodeSettings settings = new NodeSettings { RestEndPoint = "http://localhost:8787", RPCRestEndPoint = "http://localhost:8788" };
-            node = new Node(settings);
-            node.OwinListen();
         }
 
         private static Settings settings = new Settings();
@@ -107,8 +103,6 @@ namespace OffchainGUI
             textBoxWalletPrivateKey.Text = config.AppSettings.Settings["WalletPrivateKey"].Value;
             comboNetwork.SelectedItem = ConvertStringNetworkToNBitcoinNetwork(config.AppSettings.Settings["Netwrok"].Value).ToString();
             QBitNinjaBaseUrl = config.AppSettings.Settings["QBitNinjaBaseUrl"].Value;
-            settings.TelnetHostName = config.AppSettings.Settings["TelnetHostName"].Value;
-            settings.TelnetPort = Int32.Parse(config.AppSettings.Settings["TelnetPort"].Value);
             settings.RPCUserName = config.AppSettings.Settings["RPCUserName"].Value;
             settings.RPCPassword = config.AppSettings.Settings["RPCPassword"].Value;
             settings.RPCServerIpAddress = config.AppSettings.Settings["RPCServerIpAddress"].Value;
