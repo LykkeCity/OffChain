@@ -172,7 +172,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelState.cs" />
+    <Compile Include="Channel.cs">
+      <DependentUpon>LightningAsset.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ChannelState.cs">
+      <DependentUpon>LightningAsset.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\NodeController.cs" />
     <Compile Include="LightningAsset.Context.cs">
       <AutoGen>True</AutoGen>

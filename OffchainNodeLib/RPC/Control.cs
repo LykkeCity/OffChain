@@ -3,11 +3,17 @@ using OffchainNodeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.OffchainNodeLib.RPC
 {
+    public enum ChannelStateEnum
+    {
+        Reset,
+        HelloFinished,
+        NegotiateChannelFinished,
+        CreateBaseTransacionFinished
+    }
     public class ControlReply
     {
         public string ErrorText
@@ -23,7 +29,7 @@ namespace Lykke.OffchainNodeLib.RPC
         }
     }
 
-    public class Channel
+    public class InternalChannel
     {
         public Guid ChannelId
         {
@@ -31,7 +37,7 @@ namespace Lykke.OffchainNodeLib.RPC
             set;
         }
 
-        public ChannelState State
+        public ChannelStateEnum State
         {
             get;
             set;
@@ -60,13 +66,19 @@ namespace Lykke.OffchainNodeLib.RPC
     {
         const string ChannelDoesNotExist = "The provided channel id does not exist.";
         const string InvalidGuidProvided = "The provided Guid is invalid.";
+
+        public static string DBConnectionString
+        {
+            get;
+            set;
+        }
         private string CounterPartyUrl
         {
             get;
             set;
         }
 
-        IDictionary<Guid, Channel> Channels
+        IDictionary<Guid, InternalChannel> Channels
         {
             get;
             set;
@@ -74,10 +86,10 @@ namespace Lykke.OffchainNodeLib.RPC
 
         public Control()
         {
-            Channels = new Dictionary<Guid, Channel>();
+            Channels = new Dictionary<Guid, InternalChannel>();
         }
 
-        private bool ChannelShouldBe(Guid channelId, ChannelState channelState)
+        private bool ChannelShouldBe(Guid channelId, ChannelStateEnum channelState)
         {
             if (!Channels.ContainsKey(channelId))
             {
@@ -96,25 +108,66 @@ namespace Lykke.OffchainNodeLib.RPC
             }
         }
 
-        public string CreateNewChannel(string destination)
+
+
+        // http://localhost:8788/Control/CreateNewChannel?destination=10
+        public async Task<string> CreateNewChannel(string destination)
         {
-            var guid = Guid.NewGuid();
-            Channels[guid].ChannelId = guid;
-            Channels[guid].State = RPC.ChannelState.Reset;
-            Channels[guid].ErrorMessage = null;
-            return guid.ToString();
+            try
+            {
+                var guid = Guid.NewGuid();
+                
+                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+                {
+                    Channel channel = new Channel();
+                    channel.Id = guid;
+                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
+
+                    entities.Channels.Add(channel);
+                    await entities.SaveChangesAsync();
+                }
+                return guid.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public string ResetChannel(string channelId)
+        private static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
         {
-            var guid = ConvertStringToGuid(channelId);
+            return (from state in entities.ChannelStates where state.StateName.Equals(enumState.ToString())
+                    select state).FirstOrDefault();
+        }
 
-            if (!Channels.ContainsKey(guid))
+        // http://localhost:8788/Control/ResetChannel?channelId=1600534B-EFF3-49D6-82AD-2FBCDE5CF88E
+        public async Task<string> ResetChannel(string channelId)
+        {
+            try
             {
-                throw new OffchainException(ChannelDoesNotExist);
-            }
+                var guid = ConvertStringToGuid(channelId);
+                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+                {
+                    var channel = (from c in entities.Channels
+                                   where c.Id.Equals(guid)
+                                   select c).FirstOrDefault();
 
-            Channels[guid].State = RPC.ChannelState.Reset;
+                    if (channel == null)
+                    {
+                        throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
+                            channelId));
+                    }
+
+                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
+
+                    await entities.SaveChangesAsync();
+                }
+            }
+            catch(Exception exp)
+            {
+                throw exp;
+            }
+                
             return "Channel has been reset.";
         }
 
@@ -134,7 +187,7 @@ namespace Lykke.OffchainNodeLib.RPC
 
             if (!Channels.ContainsKey(guid))
             {
-                return new NegotiateChannelResult { Error = string .Format( "The channel with specified id: {0} does not exist.", channelId )};
+                return new NegotiateChannelResult { Error = string.Format("The channel with specified id: {0} does not exist.", channelId) };
             }
             else
             {

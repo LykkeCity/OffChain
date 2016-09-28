@@ -26,6 +26,7 @@ namespace Lykke.OffchainNodeLib
         {
             webApp = WebApp.Start<Startup>(settings.RestEndPoint);
             rpcWebApp = WebApp.Start<RPCStartup>(settings.RPCRestEndPoint);
+            RPC.Control.DBConnectionString = settings.DBConnectionString;
         }
 
         public void OwinStopListening()

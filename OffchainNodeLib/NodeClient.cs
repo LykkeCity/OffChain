@@ -22,7 +22,8 @@ namespace OffchainNodeLib
         {
             CounterPartyUrl = counterPartyUrl;
         }
-        public async Task<NegotiateChannelResult> NegociateChannel(Channel channel, string assetId, double amount)
+        public async Task<NegotiateChannelResult> NegociateChannel(Lykke.OffchainNodeLib.RPC.InternalChannel channel,
+            string assetId, double amount)
         {
             string error = null;
             try

@@ -5,6 +5,20 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AssetLightningModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Channel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="State" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ChannelState">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StateName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="PreGeneratedOutput">
           <Key>
             <PropertyRef Name="TransactionId" />
@@ -34,9 +48,27 @@
           <Property Name="ContributedAmount" Type="float" />
           <Property Name="Network" Type="varchar" MaxLength="10" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Channel_ChannelState">
+          <End Role="ChannelState" Type="Self.ChannelState" Multiplicity="1" />
+          <End Role="Channel" Type="Self.Channel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChannelState">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Channel">
+              <PropertyRef Name="State" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="AssetLightningModelStoreContainer">
+          <EntitySet Name="Channel" EntityType="Self.Channel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChannelState" EntityType="Self.ChannelState" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreGeneratedOutput" EntityType="Self.PreGeneratedOutput" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Channel_ChannelState" Association="Self.FK_Channel_ChannelState">
+            <End Role="ChannelState" EntitySet="ChannelState" />
+            <End Role="Channel" EntitySet="Channel" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -74,7 +106,41 @@
         <EntityContainer Name="AssetLightningEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="PreGeneratedOutputs" EntityType="Self.PreGeneratedOutput" />
           <EntitySet Name="Sessions" EntityType="Self.Session" />
+          <EntitySet Name="Channels" EntityType="Lykke.OffchainNodeLib.Channel" />
+          <EntitySet Name="ChannelStates" EntityType="Lykke.OffchainNodeLib.ChannelState" />
+          <AssociationSet Name="FK_Channel_ChannelState" Association="Lykke.OffchainNodeLib.FK_Channel_ChannelState">
+            <End Role="ChannelState" EntitySet="ChannelStates" />
+            <End Role="Channel" EntitySet="Channels" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Channel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="State" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="ChannelState" Relationship="Lykke.OffchainNodeLib.FK_Channel_ChannelState" FromRole="Channel" ToRole="ChannelState" />
+        </EntityType>
+        <EntityType Name="ChannelState">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" />
+          <Property Name="StateName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Channels" Relationship="Lykke.OffchainNodeLib.FK_Channel_ChannelState" FromRole="ChannelState" ToRole="Channel" />
+        </EntityType>
+        <Association Name="FK_Channel_ChannelState">
+          <End Type="Lykke.OffchainNodeLib.ChannelState" Role="ChannelState" Multiplicity="1" />
+          <End Type="Lykke.OffchainNodeLib.Channel" Role="Channel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChannelState">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Channel">
+              <PropertyRef Name="State" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -108,6 +174,22 @@
                 <ScalarProperty Name="Tolerance" ColumnName="Tolerance" />
                 <ScalarProperty Name="ContributedAmount" ColumnName="ContributedAmount" />
                 <ScalarProperty Name="Network" ColumnName="Network" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Channels">
+            <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.Channel">
+              <MappingFragment StoreEntitySet="Channel">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChannelStates">
+            <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.ChannelState">
+              <MappingFragment StoreEntitySet="ChannelState">
+                <ScalarProperty Name="StateName" ColumnName="StateName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

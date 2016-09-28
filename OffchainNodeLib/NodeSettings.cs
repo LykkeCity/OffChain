@@ -57,5 +57,11 @@ namespace Lykke.OffchainNodeLib
             get;
             set;
         }
+
+        public string DBConnectionString
+        {
+            get;
+            set;
+        }
     }
 }

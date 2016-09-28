@@ -83,7 +83,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Base58Encoding.cs" />
-    <Compile Include="ChannelState.cs" />
     <Compile Include="Extentions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

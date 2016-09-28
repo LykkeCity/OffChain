@@ -14,8 +14,11 @@ namespace OffchainServer
         {
             var ControlEndpoint = ConfigurationManager.AppSettings["ControlEndpoint"];
             var CommunicationEndpoint = ConfigurationManager.AppSettings["CommunicationEndpoint"];
+            var DBConnectionString = ConfigurationManager.AppSettings["DBConnectionString"];
 
-            NodeSettings settings = new NodeSettings { RestEndPoint = ControlEndpoint, RPCRestEndPoint = CommunicationEndpoint};
+            NodeSettings settings = new NodeSettings { RestEndPoint = CommunicationEndpoint,
+                RPCRestEndPoint = ControlEndpoint,
+                DBConnectionString = DBConnectionString };
             var node = new Node(settings);
             node.OwinListen();
 

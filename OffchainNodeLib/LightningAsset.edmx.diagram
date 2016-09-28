@@ -7,6 +7,9 @@
       <Diagram DiagramId="a3066c5c117b4f94972704c6ffffee77" Name="Diagram1">
         <EntityTypeShape EntityType="Lykke.OffchainNodeLib.PreGeneratedOutput" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Lykke.OffchainNodeLib.Session" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Lykke.OffchainNodeLib.Channel" Width="1.5" PointX="3" PointY="4.875" />
+        <EntityTypeShape EntityType="Lykke.OffchainNodeLib.ChannelState" Width="1.5" PointX="0.75" PointY="4.875" />
+        <AssociationConnector Association="Lykke.OffchainNodeLib.FK_Channel_ChannelState" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

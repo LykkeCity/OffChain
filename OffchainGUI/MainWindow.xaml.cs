@@ -20,7 +20,6 @@ namespace OffchainGUI
     {
         Node node = null; 
 
-        private static ChannelState channelState = ChannelState.Reset;
         public MainWindow()
         {
             InitializeComponent();
@@ -438,7 +437,7 @@ namespace OffchainGUI
             var deserializedReply = JsonConvert.DeserializeObject<JSONResponse>(helloReply);
             textBoxChannelSessionNumber.SetTextBoxValueSafely(Dispatcher, JsonConvert.DeserializeObject<HelloReply>(deserializedReply.result).SessionNumber);
             */
-            channelState = ChannelState.HelloFinished;
+            //channelState = ChannelState.HelloFinished;
         }
         
         /*
@@ -472,7 +471,7 @@ namespace OffchainGUI
         */
         private void buttonReset_Click(object sender, RoutedEventArgs e)
         {
-            channelState = ChannelState.Reset;
+            //channelState = ChannelState.Reset;
             textBoxChannelSessionNumber.Text = string.Empty;
             textBoxNegotiateResult.Text = string.Empty;
             textBoxCreateBaseTransactionHex.Text = string.Empty;
@@ -560,7 +559,7 @@ namespace OffchainGUI
                 textBoxNegotiateResult.SetTextBoxValueSafely(Dispatcher, deserializedReply.result.Result.ToString());
             }
             */
-            channelState = ChannelState.NegotiateChannelFinished;
+            // channelState = ChannelState.NegotiateChannelFinished;
         }
 
         private async void buttonCreateBaseTransaction_Click(object sender, RoutedEventArgs e)
@@ -636,7 +635,7 @@ namespace OffchainGUI
                 textBoxCreateBaseTransactionHex.Text = jsonReply.TransactionHex;
             }
             */
-            channelState = ChannelState.CreateBaseTransacionFinished;
+            // channelState = ChannelState.CreateBaseTransacionFinished;
         }
 
         public async void buttonSendAsset_Click(object sender, RoutedEventArgs e)

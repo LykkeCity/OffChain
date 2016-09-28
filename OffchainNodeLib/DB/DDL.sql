@@ -69,3 +69,64 @@ GO
 
 SET ANSI_PADDING OFF
 GO
+
+USE [AssetLightning]
+GO
+
+/****** Object:  Table [dbo].[ChannelState]    Script Date: 9/28/2016 9:44:58 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ChannelState](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[StateName] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_ChannelState] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+USE [AssetLightning]
+GO
+
+/****** Object:  Table [dbo].[Channel]    Script Date: 9/28/2016 9:43:33 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Channel](
+	[Id] [uniqueidentifier] NOT NULL,
+	[State] [bigint] NOT NULL,
+ CONSTRAINT [PK_Channel] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[Channel]  WITH CHECK ADD  CONSTRAINT [FK_Channel_ChannelState] FOREIGN KEY([State])
+REFERENCES [dbo].[ChannelState] ([Id])
+GO
+
+ALTER TABLE [dbo].[Channel] CHECK CONSTRAINT [FK_Channel_ChannelState]
+GO
+
+USE [AssetLightning]
+GO
+
+INSERT INTO [dbo].[ChannelState] ([StateName])  VALUES  ('Reset')
+INSERT INTO [dbo].[ChannelState] ([StateName])  VALUES  ('HelloFinished')
+INSERT INTO [dbo].[ChannelState] ([StateName])  VALUES  ('NegotiateChannelFinished')
+INSERT INTO [dbo].[ChannelState] ([StateName])  VALUES  ('CreateBaseTransacionFinished')
+GO
+
+
+
