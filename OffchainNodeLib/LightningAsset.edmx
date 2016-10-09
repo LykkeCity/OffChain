@@ -11,6 +11,7 @@
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="State" Type="bigint" Nullable="false" />
+          <Property Name="Destination" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="ChannelState">
           <Key>
@@ -120,6 +121,7 @@
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="State" Type="Int64" Nullable="false" />
           <NavigationProperty Name="ChannelState" Relationship="Lykke.OffchainNodeLib.FK_Channel_ChannelState" FromRole="Channel" ToRole="ChannelState" />
+          <Property Name="Destination" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ChannelState">
           <Key>
@@ -180,6 +182,7 @@
           <EntitySetMapping Name="Channels">
             <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.Channel">
               <MappingFragment StoreEntitySet="Channel">
+                <ScalarProperty Name="Destination" ColumnName="Destination" />
                 <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

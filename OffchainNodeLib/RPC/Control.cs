@@ -3,6 +3,7 @@ using OffchainNodeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Lykke.OffchainNodeLib.RPC
@@ -110,18 +111,19 @@ namespace Lykke.OffchainNodeLib.RPC
 
 
 
-        // http://localhost:8788/Control/CreateNewChannel?destination=10
+        // http://localhost:8788/Control/CreateNewChannel?destination=localhost:9787
         public async Task<string> CreateNewChannel(string destination)
         {
             try
             {
                 var guid = Guid.NewGuid();
-                
+
                 using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
                 {
                     Channel channel = new Channel();
                     channel.Id = guid;
                     channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
+                    channel.Destination = destination;
 
                     entities.Channels.Add(channel);
                     await entities.SaveChangesAsync();
@@ -136,8 +138,24 @@ namespace Lykke.OffchainNodeLib.RPC
 
         private static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
         {
-            return (from state in entities.ChannelStates where state.StateName.Equals(enumState.ToString())
+            return (from state in entities.ChannelStates
+                    where state.StateName.Equals(enumState.ToString())
                     select state).FirstOrDefault();
+        }
+
+        private Channel GetChannelFromDB(AssetLightningEntities entities, Guid guid)
+        {
+            var channel = (from c in entities.Channels
+                           where c.Id.Equals(guid)
+                           select c).FirstOrDefault();
+
+            if (channel == null)
+            {
+                throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
+                    guid.ToString()));
+            }
+
+            return channel;
         }
 
         // http://localhost:8788/Control/ResetChannel?channelId=1600534B-EFF3-49D6-82AD-2FBCDE5CF88E
@@ -148,26 +166,17 @@ namespace Lykke.OffchainNodeLib.RPC
                 var guid = ConvertStringToGuid(channelId);
                 using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
                 {
-                    var channel = (from c in entities.Channels
-                                   where c.Id.Equals(guid)
-                                   select c).FirstOrDefault();
-
-                    if (channel == null)
-                    {
-                        throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
-                            channelId));
-                    }
-
+                    var channel = GetChannelFromDB(entities, guid);
                     channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
 
                     await entities.SaveChangesAsync();
                 }
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 throw exp;
             }
-                
+
             return "Channel has been reset.";
         }
 
@@ -181,19 +190,18 @@ namespace Lykke.OffchainNodeLib.RPC
             return guid;
         }
 
+        // http://localhost:8788/Control/NegociateChannel?channelId=6f57a64f-1c66-4185-b965-72813ffe74de&assetId=TestExchangeUSD&amount=10
         public async Task<NegotiateChannelResult> NegociateChannel(string channelId, string assetId, double amount)
         {
             var guid = ConvertStringToGuid(channelId);
 
-            if (!Channels.ContainsKey(guid))
+            using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
             {
-                return new NegotiateChannelResult { Error = string.Format("The channel with specified id: {0} does not exist.", channelId) };
-            }
-            else
-            {
-                using (NodeClient client = new NodeClient(Channels[guid].CounterPartyUrl))
+                var channel = GetChannelFromDB(entities, guid);
+                using (NodeClient client = new NodeClient(channel.Destination))
                 {
-                    return await client.NegociateChannel(Channels[guid], assetId, amount);
+                    return await client.NegociateChannel(new InternalChannel { ChannelId = channel.Id, CounterPartyUrl = channel.Destination, Asset = assetId },
+                        assetId, amount);
                 }
             }
         }

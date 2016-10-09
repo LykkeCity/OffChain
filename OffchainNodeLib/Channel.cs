@@ -16,6 +16,7 @@ namespace OffchainNodeLib
     {
         public System.Guid Id { get; set; }
         public long State { get; set; }
+        public string Destination { get; set; }
     
         public virtual ChannelState ChannelState { get; set; }
     }

@@ -20,7 +20,7 @@ namespace OffchainNodeLib
         }
         public NodeClient(string counterPartyUrl)
         {
-            CounterPartyUrl = counterPartyUrl;
+            CounterPartyUrl = "http://" + counterPartyUrl;
         }
         public async Task<NegotiateChannelResult> NegociateChannel(Lykke.OffchainNodeLib.RPC.InternalChannel channel,
             string assetId, double amount)
@@ -32,12 +32,12 @@ namespace OffchainNodeLib
                 {
                     var negociateRequest = new NegociateRequest { ChannelId = channel.ChannelId.ToString(), AssetId = assetId, Amount = amount };
                     var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelRequest", negociateRequest);
-                    if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var deserialize = JsonConvert.DeserializeObject<NegociateResponse>(await response.Content.ReadAsStringAsync());
 
                         response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelConfirm", negociateRequest);
-                        if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
                             return new NegotiateChannelResult { Result = AcceptDeny.Accept };
                         }
