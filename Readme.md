@@ -8,7 +8,7 @@ The idea will be implemented as a network of peer-to-peer bidirectional asset ch
 
 # Deployment
 
-Currently in order to deploy the daemon into node, a sql server instance should be deployed and the database script from OffchainNodeLib\DB should be run to created the corresponding tables and their data.
+Currently in order to deploy the daemon into node, a sql server instance should be deployed and the database script from OffchainNodeLib\DB should be run to create the corresponding tables and their data.
 
 # Control Requests
 
@@ -26,8 +26,4 @@ Channel are a path of communication between two nodes, and each node can have ch
 
 # Manually Testing
 
-In order to manually test the communication mechanism between two nodes, two instances of OffchainServer.exe daemon should be running, in order to make things easy after each compilation there is macro present in the project (Accessible by right clicking the project name in VS 2015 and selecting Edit OffchainServer.csproj) named OutputTestDir , in the same directory under directory Settings a file named OffchainServer.exe.config should be created representing the configuration for one the two nodes participating in test.
-
-
-
-
+In order to manually test the communication mechanism between two nodes, at lease two instances of OffchainServer.exe daemon should be running, in order to make things easy after each compilation, there is a macro present in the project (Accessible by right clicking the project name in VS 2015 and selecting Edit OffchainServer.csproj) named OutputTestDir , in the same directory under directory Settings a file named OffchainServer.exe.config should be created representing the configuration for one the two nodes participating in test.
