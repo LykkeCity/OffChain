@@ -1,6 +1,7 @@
 ﻿using Lykke.OffchainNodeLib;
 using Lykke.OffchainNodeLib.RPC;
 using Newtonsoft.Json;
+using OffchainNodeLib.Controllers;
 using OffchainNodeLib.Models;
 using System;
 using System.Collections.Generic;
@@ -22,41 +23,62 @@ namespace OffchainNodeLib
         {
             CounterPartyUrl = "http://" + counterPartyUrl;
         }
-        public async Task<NegotiateChannelResult> NegociateChannel(Lykke.OffchainNodeLib.RPC.InternalChannel channel,
+        public async Task<NegotiateChannelResult> NegociateChannel(InternalChannel channel,
             string assetId, double amount)
         {
             string error = null;
             try
             {
-                using (HttpClient webClient = new HttpClient())
+                using (AssetLightningEntities entities = new AssetLightningEntities(Control.DBConnectionString))
                 {
-                    var negociateRequest = new NegociateRequest { ChannelId = channel.ChannelId.ToString(), AssetId = assetId, Amount = amount };
-                    var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelRequest", negociateRequest);
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var deserialize = JsonConvert.DeserializeObject<NegociateResponse>(await response.Content.ReadAsStringAsync());
+                    var channelFromDB = NodeController.GetChannelFromDbForNegociation(entities, channel.ChannelId, true);
 
-                        response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelConfirm", negociateRequest);
+                    using (HttpClient webClient = new HttpClient())
+                    {
+                        var negociateRequest = new NegociateRequest { ChannelId = channel.ChannelId.ToString(), AssetId = assetId, Amount = amount };
+                        var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelRequest", negociateRequest);
                         if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
-                            return new NegotiateChannelResult { Result = AcceptDeny.Accept };
+                            var deserialize = JsonConvert.DeserializeObject<NegociateResponse>(await response.Content.ReadAsStringAsync());
+
+                            if (deserialize.IsOK)
+                            {
+                                channelFromDB.Asset = assetId;
+                                channelFromDB.ContributedAmount = amount;
+                                channelFromDB.PeerContributedAmount = deserialize.Amount;
+                                await entities.SaveChangesAsync();
+
+                                response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelConfirm", negociateRequest);
+                                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                                {
+                                    channelFromDB.ChannelState = Control.GetChannelState(entities, ChannelStateEnum.NegotiateChannelFinished);
+                                    channelFromDB.IsNegociationComplete = true;
+                                    await entities.SaveChangesAsync();
+
+                                    return new NegotiateChannelResult { Result = AcceptDeny.Accept };
+                                }
+                                else
+                                {
+                                    error = "Could not confirm channel negotiation.";
+                                }
+                            }
+                            else
+                            {
+                                error = "Negotiation rejected by the peer.";
+                            }
                         }
                         else
                         {
-                            error = "Could not confirm channel negotiation.";
+                            error = "Could not negotiate channel request.";
                         }
-                    }
-                    else
-                    {
-                        error = "Could not negotiate channel request.";
-                    }
 
-                    return new NegotiateChannelResult { Error = error };
+                        return new NegotiateChannelResult { Error = error };
+                    }
                 }
             }
             catch (Exception e)
             {
-                throw new OffchainException("Communication with counterpart failed.", e);
+                throw new OffchainException("Communication with counterparty failed.", e);
             }
         }
 

@@ -105,6 +105,10 @@ CREATE TABLE [dbo].[Channel](
 	[Id] [uniqueidentifier] NOT NULL,
 	[State] [bigint] NOT NULL,
 	[Destination] [varchar](50) NOT NULL,
+	[Asset] [varchar](50) NULL,
+	[ContributedAmount] [float] NULL,
+	[PeerContributedAmount] [float] NULL,
+	[IsNegociationComplete] [bit] NULL,
  CONSTRAINT [PK_Channel] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

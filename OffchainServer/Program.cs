@@ -1,4 +1,5 @@
 ﻿using Lykke.OffchainNodeLib;
+using OffchainNodeLib.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,6 +9,21 @@ using System.Threading.Tasks;
 
 namespace OffchainServer
 {
+    public class ChannelContribution
+    {
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public double Value
+        {
+            get;
+            set;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -15,6 +31,16 @@ namespace OffchainServer
             var ControlEndpoint = ConfigurationManager.AppSettings["ControlEndpoint"];
             var CommunicationEndpoint = ConfigurationManager.AppSettings["CommunicationEndpoint"];
             var DBConnectionString = ConfigurationManager.AppSettings["DBConnectionString"];
+
+            var ChannelContributionAmount = 
+                ConfigurationManager.AppSettings["ChannelContributionAmount"];
+            var channelContributionAmounts = Newtonsoft.Json.JsonConvert.DeserializeObject<ChannelContribution[]>(ChannelContributionAmount);
+            IDictionary<string, double> contributedAmounts = new Dictionary<string, double>();
+            for(int i=0;i<channelContributionAmounts.Length;i++)
+            {
+                contributedAmounts.Add(channelContributionAmounts[i].Name, channelContributionAmounts[i].Value);
+            }
+            NodeController.ChannelContributions = contributedAmounts;
 
             NodeSettings settings = new NodeSettings { RestEndPoint = CommunicationEndpoint,
                 RPCRestEndPoint = ControlEndpoint,

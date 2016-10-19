@@ -17,6 +17,10 @@ namespace OffchainNodeLib
         public System.Guid Id { get; set; }
         public long State { get; set; }
         public string Destination { get; set; }
+        public string Asset { get; set; }
+        public Nullable<double> ContributedAmount { get; set; }
+        public Nullable<double> PeerContributedAmount { get; set; }
+        public Nullable<bool> IsNegociationComplete { get; set; }
     
         public virtual ChannelState ChannelState { get; set; }
     }

@@ -136,20 +136,20 @@ namespace Lykke.OffchainNodeLib.RPC
             }
         }
 
-        private static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
+        public static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
         {
             return (from state in entities.ChannelStates
                     where state.StateName.Equals(enumState.ToString())
                     select state).FirstOrDefault();
         }
 
-        private Channel GetChannelFromDB(AssetLightningEntities entities, Guid guid)
+        public static Channel GetChannelFromDB(AssetLightningEntities entities, Guid guid, bool throwException = true)
         {
             var channel = (from c in entities.Channels
                            where c.Id.Equals(guid)
                            select c).FirstOrDefault();
 
-            if (channel == null)
+            if (throwException && channel == null)
             {
                 throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
                     guid.ToString()));
@@ -193,17 +193,20 @@ namespace Lykke.OffchainNodeLib.RPC
         // http://localhost:8788/Control/NegociateChannel?channelId=6f57a64f-1c66-4185-b965-72813ffe74de&assetId=TestExchangeUSD&amount=10
         public async Task<NegotiateChannelResult> NegociateChannel(string channelId, string assetId, double amount)
         {
-            var guid = ConvertStringToGuid(channelId);
+            NegotiateChannelResult result = null;
 
+            var guid = ConvertStringToGuid(channelId);
             using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
             {
                 var channel = GetChannelFromDB(entities, guid);
                 using (NodeClient client = new NodeClient(channel.Destination))
                 {
-                    return await client.NegociateChannel(new InternalChannel { ChannelId = channel.Id, CounterPartyUrl = channel.Destination, Asset = assetId },
+                    result = await client.NegociateChannel(new InternalChannel { ChannelId = channel.Id, CounterPartyUrl = channel.Destination, Asset = assetId },
                         assetId, amount);
                 }
             }
+
+            return result;
         }
 
         public string Echo(string x)

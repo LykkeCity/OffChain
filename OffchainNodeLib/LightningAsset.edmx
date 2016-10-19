@@ -12,6 +12,10 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="State" Type="bigint" Nullable="false" />
           <Property Name="Destination" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Asset" Type="varchar" MaxLength="50" />
+          <Property Name="ContributedAmount" Type="float" />
+          <Property Name="PeerContributedAmount" Type="float" />
+          <Property Name="IsNegociationComplete" Type="bit" />
         </EntityType>
         <EntityType Name="ChannelState">
           <Key>
@@ -122,6 +126,10 @@
           <Property Name="State" Type="Int64" Nullable="false" />
           <NavigationProperty Name="ChannelState" Relationship="Lykke.OffchainNodeLib.FK_Channel_ChannelState" FromRole="Channel" ToRole="ChannelState" />
           <Property Name="Destination" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Asset" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContributedAmount" Type="Double" />
+          <Property Name="PeerContributedAmount" Type="Double" />
+          <Property Name="IsNegociationComplete" Type="Boolean" />
         </EntityType>
         <EntityType Name="ChannelState">
           <Key>
@@ -182,6 +190,10 @@
           <EntitySetMapping Name="Channels">
             <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.Channel">
               <MappingFragment StoreEntitySet="Channel">
+                <ScalarProperty Name="IsNegociationComplete" ColumnName="IsNegociationComplete" />
+                <ScalarProperty Name="PeerContributedAmount" ColumnName="PeerContributedAmount" />
+                <ScalarProperty Name="ContributedAmount" ColumnName="ContributedAmount" />
+                <ScalarProperty Name="Asset" ColumnName="Asset" />
                 <ScalarProperty Name="Destination" ColumnName="Destination" />
                 <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
