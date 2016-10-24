@@ -17,6 +17,17 @@
           <Property Name="PeerContributedAmount" Type="float" />
           <Property Name="IsNegociationComplete" Type="bit" />
         </EntityType>
+        <EntityType Name="ChannelCreationInputs">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="transactionHex" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="outputNumber" Type="int" Nullable="false" />
+          <Property Name="creationDate" Type="datetime" Nullable="false" />
+          <Property Name="valueWithoutDivisibility" Type="bigint" Nullable="false" />
+          <Property Name="assetId" Type="varchar" MaxLength="40" Nullable="false" />
+        </EntityType>
         <EntityType Name="ChannelState">
           <Key>
             <PropertyRef Name="Id" />
@@ -67,6 +78,7 @@
         </Association>
         <EntityContainer Name="AssetLightningModelStoreContainer">
           <EntitySet Name="Channel" EntityType="Self.Channel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChannelCreationInputs" EntityType="Self.ChannelCreationInputs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ChannelState" EntityType="Self.ChannelState" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreGeneratedOutput" EntityType="Self.PreGeneratedOutput" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
@@ -117,6 +129,7 @@
             <End Role="ChannelState" EntitySet="ChannelStates" />
             <End Role="Channel" EntitySet="Channels" />
           </AssociationSet>
+          <EntitySet Name="ChannelCreationInputs" EntityType="Lykke.OffchainNodeLib.ChannelCreationInput" />
         </EntityContainer>
         <EntityType Name="Channel">
           <Key>
@@ -151,6 +164,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ChannelCreationInput">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="transactionHex" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="outputNumber" Type="Int32" Nullable="false" />
+          <Property Name="creationDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="valueWithoutDivisibility" Type="Int64" Nullable="false" />
+          <Property Name="assetId" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -205,6 +229,18 @@
               <MappingFragment StoreEntitySet="ChannelState">
                 <ScalarProperty Name="StateName" ColumnName="StateName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChannelCreationInputs">
+            <EntityTypeMapping TypeName="Lykke.OffchainNodeLib.ChannelCreationInput">
+              <MappingFragment StoreEntitySet="ChannelCreationInputs">
+                <ScalarProperty Name="assetId" ColumnName="assetId" />
+                <ScalarProperty Name="valueWithoutDivisibility" ColumnName="valueWithoutDivisibility" />
+                <ScalarProperty Name="creationDate" ColumnName="creationDate" />
+                <ScalarProperty Name="outputNumber" ColumnName="outputNumber" />
+                <ScalarProperty Name="transactionHex" ColumnName="transactionHex" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

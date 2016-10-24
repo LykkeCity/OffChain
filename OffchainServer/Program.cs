@@ -1,4 +1,5 @@
 ﻿using Lykke.OffchainNodeLib;
+using Lykke.OffchainNodeLib.RPC;
 using OffchainNodeLib.Controllers;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,14 @@ namespace OffchainServer
             var ControlEndpoint = ConfigurationManager.AppSettings["ControlEndpoint"];
             var CommunicationEndpoint = ConfigurationManager.AppSettings["CommunicationEndpoint"];
             var DBConnectionString = ConfigurationManager.AppSettings["DBConnectionString"];
+
+            Control.RPCUsername = ConfigurationManager.AppSettings["RPCUsername"];
+            Control.RPCPassword = ConfigurationManager.AppSettings["RPCPassword"];
+            Control.RPCServerIpAddress = ConfigurationManager.AppSettings["RPCServerIpAddress"];
+            Control.RPCServerPort = Int32.Parse(ConfigurationManager.AppSettings["RPCServerPort"]);
+            Control.FeeAmountInSatoshi = Int32.Parse(ConfigurationManager.AppSettings["FeeAmountInSatoshi"]);
+
+            OpenAssetsHelper.QBitNinjaBaseUrl = ConfigurationManager.AppSettings["QBitNinjaBaseUrl"];
 
             var ChannelContributionAmount = 
                 ConfigurationManager.AppSettings["ChannelContributionAmount"];

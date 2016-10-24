@@ -141,11 +141,13 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Text.Encodings.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -175,6 +177,9 @@
     <Compile Include="Channel.cs">
       <DependentUpon>LightningAsset.tt</DependentUpon>
     </Compile>
+    <Compile Include="ChannelCreationInput.cs">
+      <DependentUpon>LightningAsset.tt</DependentUpon>
+    </Compile>
     <Compile Include="ChannelState.cs">
       <DependentUpon>LightningAsset.tt</DependentUpon>
     </Compile>
@@ -202,6 +207,7 @@
     <Compile Include="NodeClient.cs" />
     <Compile Include="NodeSettings.cs" />
     <Compile Include="OffchainException.cs" />
+    <Compile Include="OpenAssetsHelper.cs" />
     <Compile Include="PreGeneratedOutput.cs">
       <DependentUpon>LightningAsset.tt</DependentUpon>
     </Compile>

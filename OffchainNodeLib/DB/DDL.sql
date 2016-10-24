@@ -124,6 +124,21 @@ GO
 ALTER TABLE [dbo].[Channel] CHECK CONSTRAINT [FK_Channel_ChannelState]
 GO
 
+CREATE TABLE [dbo].[ChannelCreationInputs](
+	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[transactionHex] [varchar](64) NOT NULL,
+	[outputNumber] [int] NOT NULL,
+	[creationDate] [datetime] NOT NULL,
+	[valueWithoutDivisibility] [bigint] NOT NULL,
+	[assetId] [varchar](40) NOT NULL,
+ CONSTRAINT [PK_ChannelCreationInputs] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 USE [AssetLightning]
 GO
 

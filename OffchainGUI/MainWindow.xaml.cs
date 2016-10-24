@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static OffchainGUI.OpenAssetsHelper;
+using static Lykke.OffchainNodeLib.OpenAssetsHelper;
 using OffchainNodeLib;
 
 namespace OffchainGUI
@@ -228,7 +228,7 @@ namespace OffchainGUI
                 sourceWalletAddress = textBoxWalletAddressP2WPKHContent.GetTextBoxValueSafely(Dispatcher);
             }
 
-            var ret = await GetWalletOutputs(sourceWalletAddress, bitcoinNetwork);
+            var ret = await GetWalletOutputs(sourceWalletAddress);
 
             if (ret.Item2)
             {
@@ -694,14 +694,14 @@ namespace OffchainGUI
                     assetWalletAddress = assetWallet.AssetAddress;
                 }
 
-                var walletOutputs = await GetWalletOutputs(sourceWalletAddress, network);
+                var walletOutputs = await GetWalletOutputs(sourceWalletAddress);
                 if (walletOutputs.Item2)
                 {
                     ShowError(walletOutputs.Item3);
                     return;
                 }
 
-                var coins = await GetColoredUnColoredCoins(walletOutputs.Item1, assetWallet?.AssetId, network,
+                var coins = await GetColoredUnColoredCoins(walletOutputs.Item1, assetWallet?.AssetId,
                     settings.RPCUserName, settings.RPCPassword, settings.RPCServerIpAddress, settings.RPCServerPort);
 
                 var destinationAddress = BitcoinAddress.Create(destinationWallet, network);
@@ -801,14 +801,14 @@ namespace OffchainGUI
                 }
                 var issuanceWalletAddress = issuanceWallet.AssetAddress;
 
-                var walletOutputs = await GetWalletOutputs(issuanceWalletAddress, network);
+                var walletOutputs = await GetWalletOutputs(issuanceWalletAddress);
                 if (walletOutputs.Item2)
                 {
                     ShowError(walletOutputs.Item3);
                     return;
                 }
 
-                var coins = await GetColoredUnColoredCoins(walletOutputs.Item1, null, network,
+                var coins = await GetColoredUnColoredCoins(walletOutputs.Item1, null,
                     settings.RPCUserName, settings.RPCPassword, settings.RPCServerIpAddress, settings.RPCServerPort);
 
 

@@ -10,6 +10,7 @@
         <EntityTypeShape EntityType="Lykke.OffchainNodeLib.Channel" Width="1.5" PointX="3" PointY="4.875" />
         <EntityTypeShape EntityType="Lykke.OffchainNodeLib.ChannelState" Width="1.5" PointX="0.75" PointY="4.875" />
         <AssociationConnector Association="Lykke.OffchainNodeLib.FK_Channel_ChannelState" />
+        <EntityTypeShape EntityType="Lykke.OffchainNodeLib.ChannelCreationInput" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
