@@ -14,6 +14,12 @@ namespace OffchainNodeLib.Models
             set;
         }
 
+        public string BitcoinAddress
+        {
+            get;
+            set;
+        }
+
         public string AssetId
         {
             get;

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace OffchainNodeLib.Models
 {
+    
+
     public class NegociateResponse
     {
         public string ChannelId
@@ -15,6 +17,12 @@ namespace OffchainNodeLib.Models
         }
 
         public double Amount
+        {
+            get;
+            set;
+        }
+
+        public string BitcoinAddress
         {
             get;
             set;

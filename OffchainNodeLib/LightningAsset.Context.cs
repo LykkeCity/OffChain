@@ -32,8 +32,8 @@ namespace OffchainNodeLib
     
         public virtual DbSet<PreGeneratedOutput> PreGeneratedOutputs { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
-        public virtual DbSet<Channel> Channels { get; set; }
         public virtual DbSet<ChannelState> ChannelStates { get; set; }
         public virtual DbSet<ChannelCreationInput> ChannelCreationInputs { get; set; }
+        public virtual DbSet<Channel> Channels { get; set; }
     }
 }

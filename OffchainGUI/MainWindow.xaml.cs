@@ -18,7 +18,7 @@ namespace OffchainGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        Node node = null; 
+        Node node = null;
 
         public MainWindow()
         {
@@ -282,6 +282,8 @@ namespace OffchainGUI
                 textBoxWalletAddressP2WPKHContent.Text = secret.PubKey.GetSegwitAddress(Network.SegNet).ToWif();
                 PayToPubkeyHashTemplate p2pkh = new PayToPubkeyHashTemplate();
                 Script p2pkhScript = p2pkh.GenerateScriptPubKey(new BitcoinPubKeyAddress(textBoxWalletAddressP2PKHContent.Text));
+
+                textBoxWalletAddressP2SHP2WPKHContent.Text = secret.PubKey.GetSegwitAddress(ConvertStringNetworkToNBitcoinNetwork(GetSelectedNetwork())).GetScriptAddress().ToWif();
                 textBoxAssetIdP2PKH.Text = (new NBitcoin.OpenAsset.AssetId(p2pkhScript)).
                     GetWif(ConvertStringNetworkToNBitcoinNetwork(GetSelectedNetwork())).
                     ToString();
@@ -391,55 +393,55 @@ namespace OffchainGUI
 
         private async void buttonSayHello_Click(object sender, RoutedEventArgs e)
         {
-        /*    
-            if (!ChannelShouldBe(ChannelState.Reset))
-            {
-                return;
-            }
+            /*    
+                if (!ChannelShouldBe(ChannelState.Reset))
+                {
+                    return;
+                }
 
-            BitcoinSecret secret = null;
-            if ((secret = GetBitcoinSecretFromScreenBoxes()) == null)
-            {
-                return;
-            }
+                BitcoinSecret secret = null;
+                if ((secret = GetBitcoinSecretFromScreenBoxes()) == null)
+                {
+                    return;
+                }
 
-            if (GetSelectedNetwork().ToLower() != "segnet")
-            {
-                ShowError("Only Segnet addresses is supported.");
-                return;
-            }
+                if (GetSelectedNetwork().ToLower() != "segnet")
+                {
+                    ShowError("Only Segnet addresses is supported.");
+                    return;
+                }
 
-            string helloReply = null;
+                string helloReply = null;
 
-            try
-            {
-                string randomMessage = "Hello";
-                var paramsList = new List<string>();
-                paramsList.Add(secret.PubKey.ToHex());
-                //paramsList.Add(GetSelectedNetwork());
-                paramsList.Add("TestNet"); // Currently SegNet over testnet is the only option
-                paramsList.Add(randomMessage);
-                paramsList.Add(secret.PrivateKey.SignMessage(randomMessage));
+                try
+                {
+                    string randomMessage = "Hello";
+                    var paramsList = new List<string>();
+                    paramsList.Add(secret.PubKey.ToHex());
+                    //paramsList.Add(GetSelectedNetwork());
+                    paramsList.Add("TestNet"); // Currently SegNet over testnet is the only option
+                    paramsList.Add(randomMessage);
+                    paramsList.Add(secret.PrivateKey.SignMessage(randomMessage));
 
-                helloReply = await CreateAndSendJsonRequest("Hello", paramsList.ToArray());
-            }
-            catch (Exception exp)
-            {
-                ShowError(exp.Message);
-                return;
-            }
+                    helloReply = await CreateAndSendJsonRequest("Hello", paramsList.ToArray());
+                }
+                catch (Exception exp)
+                {
+                    ShowError(exp.Message);
+                    return;
+                }
 
-            if (string.IsNullOrEmpty(helloReply))
-            {
-                ShowError("Null reply");
-                return;
-            }
-            var deserializedReply = JsonConvert.DeserializeObject<JSONResponse>(helloReply);
-            textBoxChannelSessionNumber.SetTextBoxValueSafely(Dispatcher, JsonConvert.DeserializeObject<HelloReply>(deserializedReply.result).SessionNumber);
-            */
+                if (string.IsNullOrEmpty(helloReply))
+                {
+                    ShowError("Null reply");
+                    return;
+                }
+                var deserializedReply = JsonConvert.DeserializeObject<JSONResponse>(helloReply);
+                textBoxChannelSessionNumber.SetTextBoxValueSafely(Dispatcher, JsonConvert.DeserializeObject<HelloReply>(deserializedReply.result).SessionNumber);
+                */
             //channelState = ChannelState.HelloFinished;
         }
-        
+
         /*
         private static async Task<string> CreateAndSendJsonRequest(string requestName, string[] parameters)
         {
@@ -644,7 +646,7 @@ namespace OffchainGUI
             {
                 var asset = (comboBoxAssetToSend.SelectedItem as string);
                 var destinationWallet = textBoxSendDestinationAddress.GetTextBoxValueSafely(Dispatcher);
-                float sendAmount = 0;
+                double sendAmount = 0;
                 if (string.IsNullOrEmpty(asset))
                 {
                     ShowError("We should first have a valid asset to send.");
@@ -655,19 +657,28 @@ namespace OffchainGUI
                     ShowError("Destination wallet should have a valid non null / non empty value.");
                     return;
                 }
-                if (!float.TryParse(textBoxAmountToSend.GetTextBoxValueSafely(Dispatcher), out sendAmount))
+                if (!double.TryParse(textBoxAmountToSend.GetTextBoxValueSafely(Dispatcher), out sendAmount))
                 {
                     ShowError("Amount to issue should be a valid float.");
                     return;
                 }
                 string sourceWalletAddress = null;
-                if (checkBoxSendFromP2PKH.IsChecked ?? false)
+                BitcoinSecret secret = null;
+                if (checkBoxSendFromP2SHP2WPKH.IsChecked ?? false)
                 {
-                    sourceWalletAddress = textBoxWalletAddressP2PKHContent.GetTextBoxValueSafely(Dispatcher);
+                    sourceWalletAddress = textBoxWalletAddressP2SHP2WPKHContent.GetTextBoxValueSafely(Dispatcher);
+                    secret = new BitcoinSecret(textBoxWalletPrivateKey.Text);
                 }
                 else
                 {
-                    sourceWalletAddress = textBoxWalletAddressP2WPKHContent.GetTextBoxValueSafely(Dispatcher);
+                    if (checkBoxSendFromP2PKH.IsChecked ?? false)
+                    {
+                        sourceWalletAddress = textBoxWalletAddressP2PKHContent.GetTextBoxValueSafely(Dispatcher);
+                    }
+                    else
+                    {
+                        sourceWalletAddress = textBoxWalletAddressP2WPKHContent.GetTextBoxValueSafely(Dispatcher);
+                    }
                 }
                 var sourcePrivateKey = textBoxWalletPrivateKey.GetTextBoxValueSafely(Dispatcher);
                 var network = ConvertStringNetworkToNBitcoinNetwork(GetSelectedNetwork());
@@ -716,10 +727,23 @@ namespace OffchainGUI
                         ShowError("There is no uncolored coins to use for sending.");
                         return;
                     }
-                    tx = builder
-                    .AddKeys(new BitcoinSecret(sourcePrivateKey, network))
-                    .AddCoins(uncoloredCoins)
-                    .Send(destinationAddress, new Money((int)sendAmount))
+                    builder
+                    .AddKeys(new BitcoinSecret(sourcePrivateKey, network));
+                    if (checkBoxSendFromP2SHP2WPKH.IsChecked ?? false)
+                    {
+                        ScriptCoin sc = null;
+                        foreach (var c in uncoloredCoins)
+                        {
+                            sc = new ScriptCoin(c, secret.PubKey.GetSegwitAddress
+                                (ConvertStringNetworkToNBitcoinNetwork(GetSelectedNetwork())).ScriptPubKey);
+                        }
+                        builder.AddCoins(new ScriptCoin[] { sc });
+                    }
+                    else
+                    {
+                        builder.AddCoins(uncoloredCoins);
+                    }
+                    tx = builder.Send(destinationAddress, new Money((long)(sendAmount * OpenAssetsHelper.BTCToSathoshiMultiplicationFactor)))
                     .SetChange(BitcoinAddress.Create(sourceWalletAddress, network))
                     .SendFees(TransactionSendFeesInSatoshi)
                     .BuildTransaction(true);
@@ -888,7 +912,7 @@ namespace OffchainGUI
             var pubKey01 = textBoxWalletPubKey.Text;
             var pubKey02 = textBoxExchangePubKey.Text;
 
-            if(!string.IsNullOrEmpty(pubKey01) 
+            if (!string.IsNullOrEmpty(pubKey01)
                 && !string.IsNullOrEmpty(pubKey02))
             {
                 var multisig = PayToMultiSigTemplate.Instance.GenerateScriptPubKey(2,

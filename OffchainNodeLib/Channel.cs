@@ -21,6 +21,8 @@ namespace OffchainNodeLib
         public Nullable<double> ContributedAmount { get; set; }
         public Nullable<double> PeerContributedAmount { get; set; }
         public Nullable<bool> IsNegociationComplete { get; set; }
+        public string BitcoinAddress { get; set; }
+        public string PeerBitcoinAddress { get; set; }
     
         public virtual ChannelState ChannelState { get; set; }
     }

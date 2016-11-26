@@ -9,7 +9,7 @@
     <Grid Margin="0,0,2,10">
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="743" Margin="14,10,0,0" VerticalAlignment="Top" Width="888">
             <TabItem Header="Wallet">
-                <Grid Background="#FFE5E5E5" Margin="0,0,8,-4">
+                <Grid Background="#FFE5E5E5" Margin="0,1,8.4,-4.6">
                     <Label x:Name="labelWalletPrivateKey" Content="Wallet Private Key:" HorizontalAlignment="Left" Margin="58,43,0,0" VerticalAlignment="Top" Height="27"/>
                     <TextBox x:Name="textBoxWalletPrivateKey" HorizontalAlignment="Left" Height="24" Margin="171,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" TextChanged="textBoxWalletPrivateKey_TextChanged"/>
                     <Button x:Name="buttonSave" Content="Save" HorizontalAlignment="Left" Margin="775,75,0,0" VerticalAlignment="Top" Width="69" Click="buttonSave_Click" Height="20"/>
@@ -20,16 +20,16 @@
                     </ComboBox>
                     <Label x:Name="labelNetworkComboBox" Content="Network" HorizontalAlignment="Left" Margin="69,17,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.737,0.154" Height="26"/>
                     <Button x:Name="buttonGenerateNewPrivateKey" Content="Generate" HorizontalAlignment="Left" Margin="774,46,0,0" VerticalAlignment="Top" Width="69" Click="buttonGenerateNewPrivateKey_Click" Height="21"/>
-                    <DataGrid x:Name="dataGridWalletOutputs" HorizontalAlignment="Left" Margin="9,286,0,0" VerticalAlignment="Top" Height="133" Width="741"/>
-                    <Button x:Name="buttonRefreshWalletOutputs" Content="Refresh Wallet Outputs" HorizontalAlignment="Left" Margin="628,427,0,0" VerticalAlignment="Top" Width="143" Click="buttonRefreshWalletOutputs_Click" Height="20"/>
+                    <DataGrid x:Name="dataGridWalletOutputs" HorizontalAlignment="Left" Margin="9,345,0,0" VerticalAlignment="Top" Height="133" Width="741"/>
+                    <Button x:Name="buttonRefreshWalletOutputs" Content="Refresh Wallet Outputs" HorizontalAlignment="Left" Margin="628,486,0,0" VerticalAlignment="Top" Width="143" Click="buttonRefreshWalletOutputs_Click" Height="20"/>
                     <Label x:Name="labelWalletAddressP2PKH" Content="Wallet Address (P2PKH):" HorizontalAlignment="Left" Margin="28,67,0,0" VerticalAlignment="Top" Height="26"/>
                     <TextBox x:Name="textBoxWalletAddressP2PKHContent" HorizontalAlignment="Left" Margin="171,75,0,0" VerticalAlignment="Top" IsReadOnly="True" Width="415" Height="18"/>
-                    <Label x:Name="labelAssetIdP2PKH" Content="Assest ID (P2PKH):" HorizontalAlignment="Left" Margin="59,116,0,0" VerticalAlignment="Top" Height="26"/>
-                    <TextBox x:Name="textBoxAssetIdP2PKH" HorizontalAlignment="Left" Height="23" Margin="171,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" IsReadOnly="True"/>
-                    <Label x:Name="labelAssetIdP2WPKH" Content="Assest ID (P2WPKH):" HorizontalAlignment="Left" Margin="48,147,0,0" VerticalAlignment="Top" Height="26"/>
-                    <TextBox x:Name="textBoxAssetIdP2WPKH" HorizontalAlignment="Left" Height="23" Margin="171,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" IsReadOnly="True"/>
+                    <Label x:Name="labelAssetIdP2PKH" Content="Assest ID (P2PKH):" HorizontalAlignment="Left" Margin="59,154,0,0" VerticalAlignment="Top" Height="26"/>
+                    <TextBox x:Name="textBoxAssetIdP2PKH" HorizontalAlignment="Left" Height="23" Margin="171,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" IsReadOnly="True"/>
+                    <Label x:Name="labelAssetIdP2WPKH" Content="Assest ID (P2WPKH):" HorizontalAlignment="Left" Margin="48,185,0,0" VerticalAlignment="Top" Height="26"/>
+                    <TextBox x:Name="textBoxAssetIdP2WPKH" HorizontalAlignment="Left" Height="23" Margin="171,188,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" IsReadOnly="True"/>
                     <CheckBox x:Name="checkBoxPrivateKeyInBase58" Content="Private Key in Base 58" HorizontalAlignment="Left" Margin="623,49,0,0" VerticalAlignment="Top" Checked="checkBoxPrivateKeyInBase58_Checked" Unchecked="checkBoxPrivateKeyInBase58_Unchecked" Height="16"/>
-                    <Border Margin="10,543,0,0" Background="LightGray" HorizontalAlignment="Left" Width="734" Height="96" VerticalAlignment="Top">
+                    <Border Margin="10,602,0,0" Background="LightGray" HorizontalAlignment="Left" Width="734" Height="96" VerticalAlignment="Top">
                         <Grid>
                             <Label x:Name="labelIssuanceAsset" Content="Asset:" Margin="10,4,683,39"/>
                             <ComboBox x:Name="comboBoxAssetToIssue" Margin="56,4,425,67" />
@@ -44,7 +44,7 @@
                     </Border>
                     <Label x:Name="labelWalletAddressP2WPKH" Content="Wallet Address (P2WPKH):" HorizontalAlignment="Left" Margin="22,90,0,0" VerticalAlignment="Top" Height="26"/>
                     <TextBox x:Name="textBoxWalletAddressP2WPKHContent" HorizontalAlignment="Left" Margin="171,98,0,0" VerticalAlignment="Top" IsReadOnly="True" Width="415" Height="18"/>
-                    <Border Margin="10,451,0,0" Background="LightGray" HorizontalAlignment="Left" Width="734" Height="87" VerticalAlignment="Top">
+                    <Border Margin="10,510,0,0" Background="LightGray" HorizontalAlignment="Left" Width="734" Height="87" VerticalAlignment="Top">
                         <Grid>
                             <Label x:Name="labelSendAsset" Content="Asset:" Margin="10,4,683,39"/>
                             <ComboBox x:Name="comboBoxAssetToSend" Margin="56,4,425,61" />
@@ -57,13 +57,16 @@
                             <TextBox x:Name="textBoxSendTransactionId" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="520" Margin="124,62,0,0" IsReadOnly="True"/>
                         </Grid>
                     </Border>
-                    <CheckBox x:Name="checkBoxSendFromP2PKH" Margin="9,424,711,149" Content="Use P2PKH as source" />
-                    <Label x:Name="labelWalletPubKey" Content="Wallet Pub Key:" HorizontalAlignment="Left" Margin="69,178,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textBoxWalletPubKey" HorizontalAlignment="Left" Height="23" Margin="171,181,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="453" IsReadOnly="True"/>
-                    <Label x:Name="labelExchangePubKey" Content="Exchange Pub Key:" HorizontalAlignment="Left" Margin="54,209,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.184,-0.269"/>
-                    <TextBox x:Name="textBoxExchangePubKey" HorizontalAlignment="Left" Height="23" Margin="171,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="453" TextChanged="textBoxExchangePubKey_TextChanged"/>
-                    <Label x:Name="labelMultisig" Content="Multisig" HorizontalAlignment="Left" Margin="113,240,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textBoxMultisig" HorizontalAlignment="Left" Height="23" Margin="171,244,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415"/>
+                    <CheckBox x:Name="checkBoxSendFromP2PKH" Margin="9,483,712,213" Content="Use P2PKH as source" />
+                    <Label x:Name="labelWalletPubKey" Content="Wallet Pub Key:" HorizontalAlignment="Left" Margin="69,216,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textBoxWalletPubKey" HorizontalAlignment="Left" Height="23" Margin="171,219,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="453" IsReadOnly="True"/>
+                    <Label x:Name="labelExchangePubKey" Content="Exchange Pub Key:" HorizontalAlignment="Left" Margin="54,247,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.184,-0.269"/>
+                    <TextBox x:Name="textBoxExchangePubKey" HorizontalAlignment="Left" Height="23" Margin="171,250,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="453" TextChanged="textBoxExchangePubKey_TextChanged"/>
+                    <Label x:Name="labelMultisig" Content="Multisig" HorizontalAlignment="Left" Margin="113,278,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textBoxMultisig" HorizontalAlignment="Left" Height="23" Margin="171,282,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="415"/>
+                    <Label x:Name="labelWalletAddressP2WPKH_Copy" Content="Address (P2SH - P2WPKH):" HorizontalAlignment="Left" Margin="14,122,0,0" VerticalAlignment="Top" Height="26"/>
+                    <TextBox x:Name="textBoxWalletAddressP2SHP2WPKHContent" HorizontalAlignment="Left" Margin="171,130,0,0" VerticalAlignment="Top" IsReadOnly="True" Width="415" Height="18"/>
+                    <CheckBox x:Name="checkBoxSendFromP2SHP2WPKH" Margin="147,483,575,212" Content="Use P2SH-P2WPKH as source" />
                 </Grid>
 
             </TabItem>

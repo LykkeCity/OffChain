@@ -23,57 +23,85 @@ namespace OffchainNodeLib
         {
             CounterPartyUrl = "http://" + counterPartyUrl;
         }
-        public async Task<NegotiateChannelResult> NegociateChannel(InternalChannel channel,
+
+        public async Task<SetupFundingTxResult> SetupFundingTx(AssetLightningEntities entities, Channel channel, string outputTransactionHash,
+            int outputNumber)
+        {
+            try
+            {
+                string error = null;
+                using (HttpClient webClient = new HttpClient())
+                {
+                    var setupFundingRequest = new SetupFundingRequest
+                    {
+                        ChannelId = channel.ToString(),
+                        OutputTransactionHash = outputTransactionHash,
+                        OutputTransactionNumber = outputNumber
+                    };
+
+                    var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/SetupFundingRequest", setupFundingRequest);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var deserialize = JsonConvert.DeserializeObject<SetupFundingResponse>(await response.Content.ReadAsStringAsync());
+                    }
+
+                    return new SetupFundingTxResult { Error = null, Result = AcceptDeny.Accept };
+                }
+            }
+            catch (Exception e)
+            {
+                throw new OffchainException("Communication with counterparty failed.", e);
+            }
+        }
+
+        public async Task<NegotiateChannelResult> NegociateChannel(AssetLightningEntities entities, Channel channel,
             string assetId, double amount)
         {
             string error = null;
             try
             {
-                using (AssetLightningEntities entities = new AssetLightningEntities(Control.DBConnectionString))
+                var channelFromDB = NodeController.GetChannelFromDbForNegociation(entities, channel.Id, true);
+
+                using (HttpClient webClient = new HttpClient())
                 {
-                    var channelFromDB = NodeController.GetChannelFromDbForNegociation(entities, channel.ChannelId, true);
-
-                    using (HttpClient webClient = new HttpClient())
+                    var negociateRequest = new NegociateRequest { ChannelId = channel.Id.ToString(), AssetId = assetId, Amount = amount };
+                    var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelRequest", negociateRequest);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        var negociateRequest = new NegociateRequest { ChannelId = channel.ChannelId.ToString(), AssetId = assetId, Amount = amount };
-                        var response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelRequest", negociateRequest);
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            var deserialize = JsonConvert.DeserializeObject<NegociateResponse>(await response.Content.ReadAsStringAsync());
+                        var deserialize = JsonConvert.DeserializeObject<NegociateResponse>(await response.Content.ReadAsStringAsync());
 
-                            if (deserialize.IsOK)
+                        if (deserialize.IsOK)
+                        {
+                            channelFromDB.Asset = assetId;
+                            channelFromDB.ContributedAmount = amount;
+                            channelFromDB.PeerContributedAmount = deserialize.Amount;
+                            await entities.SaveChangesAsync();
+
+                            response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelConfirm", negociateRequest);
+                            if (response.StatusCode == System.Net.HttpStatusCode.OK)
                             {
-                                channelFromDB.Asset = assetId;
-                                channelFromDB.ContributedAmount = amount;
-                                channelFromDB.PeerContributedAmount = deserialize.Amount;
+                                channelFromDB.ChannelState = Control.GetChannelState(entities, ChannelStateEnum.NegotiateChannelFinished);
+                                channelFromDB.IsNegociationComplete = true;
                                 await entities.SaveChangesAsync();
 
-                                response = await webClient.PostAsJsonAsync(CounterPartyUrl + "/Node/NegociateChannelConfirm", negociateRequest);
-                                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                                {
-                                    channelFromDB.ChannelState = Control.GetChannelState(entities, ChannelStateEnum.NegotiateChannelFinished);
-                                    channelFromDB.IsNegociationComplete = true;
-                                    await entities.SaveChangesAsync();
-
-                                    return new NegotiateChannelResult { Result = AcceptDeny.Accept };
-                                }
-                                else
-                                {
-                                    error = "Could not confirm channel negotiation.";
-                                }
+                                return new NegotiateChannelResult { Result = AcceptDeny.Accept };
                             }
                             else
                             {
-                                error = "Negotiation rejected by the peer.";
+                                error = "Could not confirm channel negotiation.";
                             }
                         }
                         else
                         {
-                            error = "Could not negotiate channel request.";
+                            error = "Negotiation rejected by the peer.";
                         }
-
-                        return new NegotiateChannelResult { Error = error };
                     }
+                    else
+                    {
+                        error = "Could not negotiate channel request.";
+                    }
+
+                    return new NegotiateChannelResult { Error = error };
                 }
             }
             catch (Exception e)

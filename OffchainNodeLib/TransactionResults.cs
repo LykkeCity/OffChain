@@ -30,6 +30,15 @@ namespace Lykke.OffchainNodeLib
         }
     }
 
+    public class SetupFundingTxResult : ResultBase
+    {
+        public AcceptDeny Result
+        {
+            get;
+            set;
+        }
+    }
+
     public class GetMessageSignatureResult : ResultBase
     {
         public string Signature

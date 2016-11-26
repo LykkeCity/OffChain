@@ -122,6 +122,14 @@
       <HintPath>..\packages\Microsoft.Owin.Hosting.3.0.1\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NBitcoin, Version=3.0.0.48, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NBitcoin.3.0.0.48\lib\net45\NBitcoin.dll</HintPath>
       <Private>True</Private>
@@ -203,6 +211,8 @@
     <Compile Include="Models\NegociateResponse.cs" />
     <Compile Include="Models\NegociateRequest.cs" />
     <Compile Include="Models\NodeModels.cs" />
+    <Compile Include="Models\SetupFundingResponse.cs" />
+    <Compile Include="Models\SetupFundingRequest.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NodeClient.cs" />
     <Compile Include="NodeSettings.cs" />

@@ -34,41 +34,9 @@ namespace Lykke.OffchainNodeLib.RPC
         }
     }
 
-    public class InternalChannel
-    {
-        public Guid ChannelId
-        {
-            get;
-            set;
-        }
-
-        public ChannelStateEnum State
-        {
-            get;
-            set;
-        }
-
-        public string ErrorMessage
-        {
-            get;
-            set;
-        }
-
-        public string Asset
-        {
-            get;
-            set;
-        }
-
-        public string CounterPartyUrl
-        {
-            get;
-            set;
-        }
-    }
-
     public class Control : LightNodeContract
     {
+        #region GeneralItems
         const string ChannelDoesNotExist = "The provided channel id does not exist.";
         const string InvalidGuidProvided = "The provided Guid is invalid.";
 
@@ -76,141 +44,6 @@ namespace Lykke.OffchainNodeLib.RPC
         {
             get;
             set;
-        }
-        private string CounterPartyUrl
-        {
-            get;
-            set;
-        }
-
-        IDictionary<Guid, InternalChannel> Channels
-        {
-            get;
-            set;
-        }
-
-        public Control()
-        {
-            Channels = new Dictionary<Guid, InternalChannel>();
-        }
-
-        private bool ChannelShouldBe(Guid channelId, ChannelStateEnum channelState)
-        {
-            if (!Channels.ContainsKey(channelId))
-            {
-                throw new OffchainException(ChannelDoesNotExist);
-            }
-            if (Channels[channelId].State != channelState)
-            {
-                var message = String.Format("Channel should be in {0} state."
-                    , channelState.ToString());
-                Channels[channelId].ErrorMessage = message;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-
-
-        // http://localhost:8788/Control/CreateNewChannel?destination=localhost:9787
-        public async Task<string> CreateNewChannel(string destination)
-        {
-            try
-            {
-                var guid = Guid.NewGuid();
-
-                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
-                {
-                    Channel channel = new Channel();
-                    channel.Id = guid;
-                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
-                    channel.Destination = destination;
-
-                    entities.Channels.Add(channel);
-                    await entities.SaveChangesAsync();
-                }
-                return guid.ToString();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
-        {
-            return (from state in entities.ChannelStates
-                    where state.StateName.Equals(enumState.ToString())
-                    select state).FirstOrDefault();
-        }
-
-        public static Channel GetChannelFromDB(AssetLightningEntities entities, Guid guid, bool throwException = true)
-        {
-            var channel = (from c in entities.Channels
-                           where c.Id.Equals(guid)
-                           select c).FirstOrDefault();
-
-            if (throwException && channel == null)
-            {
-                throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
-                    guid.ToString()));
-            }
-
-            return channel;
-        }
-
-        // http://localhost:8788/Control/ResetChannel?channelId=1600534B-EFF3-49D6-82AD-2FBCDE5CF88E
-        public async Task<string> ResetChannel(string channelId)
-        {
-            try
-            {
-                var guid = ConvertStringToGuid(channelId);
-                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
-                {
-                    var channel = GetChannelFromDB(entities, guid);
-                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
-
-                    await entities.SaveChangesAsync();
-                }
-            }
-            catch (Exception exp)
-            {
-                throw exp;
-            }
-
-            return "Channel has been reset.";
-        }
-
-        private Guid ConvertStringToGuid(string guidStr)
-        {
-            Guid guid;
-            if (!Guid.TryParse(guidStr, out guid))
-            {
-                throw new OffchainException(InvalidGuidProvided);
-            }
-            return guid;
-        }
-
-        // http://localhost:8788/Control/NegociateChannel?channelId=6f57a64f-1c66-4185-b965-72813ffe74de&assetId=TestExchangeUSD&amount=10
-        public async Task<NegotiateChannelResult> NegociateChannel(string channelId, string assetId, double amount)
-        {
-            NegotiateChannelResult result = null;
-
-            var guid = ConvertStringToGuid(channelId);
-            using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
-            {
-                var channel = GetChannelFromDB(entities, guid);
-                using (NodeClient client = new NodeClient(channel.Destination))
-                {
-                    result = await client.NegociateChannel(new InternalChannel { ChannelId = channel.Id, CounterPartyUrl = channel.Destination, Asset = assetId },
-                        assetId, amount);
-                }
-            }
-
-            return result;
         }
 
         public static string RPCServerIpAddress
@@ -279,6 +112,132 @@ namespace Lykke.OffchainNodeLib.RPC
             }
         }
 
+        public static ChannelState GetChannelState(AssetLightningEntities entities, ChannelStateEnum enumState)
+        {
+            return (from state in entities.ChannelStates
+                    where state.StateName.Equals(enumState.ToString())
+                    select state).FirstOrDefault();
+        }
+
+        public static Channel GetChannelFromDB(AssetLightningEntities entities, Guid guid, bool throwException = true)
+        {
+            var channel = (from c in entities.Channels
+                           where c.Id.Equals(guid)
+                           select c).FirstOrDefault();
+
+            if (throwException && channel == null)
+            {
+                throw new OffchainException(string.Format("The specified channel with id {0} does not exist.",
+                    guid.ToString()));
+            }
+
+            return channel;
+        }
+
+        private Guid ConvertStringToGuid(string guidStr)
+        {
+            Guid guid;
+            if (!Guid.TryParse(guidStr, out guid))
+            {
+                throw new OffchainException(InvalidGuidProvided);
+            }
+            return guid;
+        }
+        #endregion
+
+        public Control()
+        {
+        }
+
+        /*
+        private bool ChannelShouldBe(Guid channelId, ChannelStateEnum channelState)
+        {
+            if (!Channels.ContainsKey(channelId))
+            {
+                throw new OffchainException(ChannelDoesNotExist);
+            }
+            if (Channels[channelId].State != channelState)
+            {
+                var message = String.Format("Channel should be in {0} state."
+                    , channelState.ToString());
+                Channels[channelId].ErrorMessage = message;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        */
+
+
+        // http://localhost:8788/Control/CreateNewChannel?destination=localhost:9787
+        public async Task<string> CreateNewChannel(string destination)
+        {
+            try
+            {
+                var guid = Guid.NewGuid();
+
+                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+                {
+                    Channel channel = new Channel();
+                    channel.Id = guid;
+                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
+                    channel.Destination = destination;
+
+                    entities.Channels.Add(channel);
+                    await entities.SaveChangesAsync();
+                }
+                return guid.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // http://localhost:8788/Control/ResetChannel?channelId=1600534B-EFF3-49D6-82AD-2FBCDE5CF88E
+        public async Task<string> ResetChannel(string channelId)
+        {
+            try
+            {
+                var guid = ConvertStringToGuid(channelId);
+                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+                {
+                    var channel = GetChannelFromDB(entities, guid);
+                    channel.ChannelState = GetChannelState(entities, ChannelStateEnum.Reset);
+
+                    await entities.SaveChangesAsync();
+                }
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+
+            return "Channel has been reset.";
+        }
+
+        // http://localhost:8788/Control/NegociateChannel?channelId=6f57a64f-1c66-4185-b965-72813ffe74de&assetId=TestExchangeUSD&amount=10
+        public async Task<NegotiateChannelResult> NegociateChannel(string channelId, string assetId, double amount)
+        {
+            NegotiateChannelResult result = null;
+
+            var guid = ConvertStringToGuid(channelId);
+            using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+            {
+                var channel = GetChannelFromDB(entities, guid);
+                using (NodeClient client = new NodeClient(channel.Destination))
+                {
+                    result = await client.NegociateChannel(entities, channel,
+                        assetId, amount);
+                }
+            }
+
+            return result;
+        }
+
+        #region ChannelOutputsCreationAndAdditionRequests
         // http://localhost:8788/Control/AddChannelCreationOutputsToPersistance?json=%5B%7B%22TransactionHash%22%3A%22d54b0f1bd2ff9dab9c43cf7297ac392423bfdccf7b9e8ad9b9b2356ab597de99%22%2C%22OutputNumber%22%3A1%2C%22Amount%22%3A2000%2C%22AssetId%22%3A%22ocmVkVUHnrdSKASFWuHy6hxqTWFc9vdL9d%22%7D%2C%7B%22TransactionHash%22%3A%22d54b0f1bd2ff9dab9c43cf7297ac392423bfdccf7b9e8ad9b9b2356ab597de99%22%2C%22OutputNumber%22%3A2%2C%22Amount%22%3A2000%2C%22AssetId%22%3A%22ocmVkVUHnrdSKASFWuHy6hxqTWFc9vdL9d%22%7D%2C%7B%22TransactionHash%22%3A%22d54b0f1bd2ff9dab9c43cf7297ac392423bfdccf7b9e8ad9b9b2356ab597de99%22%2C%22OutputNumber%22%3A3%2C%22Amount%22%3A2000%2C%22AssetId%22%3A%22ocmVkVUHnrdSKASFWuHy6hxqTWFc9vdL9d%22%7D%5D
         public async Task AddChannelCreationOutputsToPersistance(string json)
         {
@@ -340,8 +299,8 @@ namespace Lykke.OffchainNodeLib.RPC
 
                     for (int i = 0; i < count; i++)
                     {
-                        builder.SendAsset(destAddress, new NBitcoin.OpenAsset.AssetMoney
-                            (new NBitcoin.OpenAsset.AssetId(new BitcoinAssetId(assetId)), amountWithoutDivisibility));
+                        builder.SendAsset(destAddress, new AssetMoney
+                            (new AssetId(new BitcoinAssetId(assetId)), amountWithoutDivisibility));
                     }
                     builder.SetChange(secret.GetAddress());
                     builder.SendFees(new Money(FeeAmountInSatoshi));
@@ -393,6 +352,42 @@ namespace Lykke.OffchainNodeLib.RPC
             {
                 throw exp;
             }
+        }
+        #endregion
+
+        public async Task<SetupFundingTxResult> SetupFundingTx(string channelId)
+        {
+            SetupFundingTxResult result = null;
+            try
+            {
+                Guid guid = ConvertStringToGuid(channelId);
+                using (AssetLightningEntities entities = new AssetLightningEntities(DBConnectionString))
+                {
+                    var channel = GetChannelFromDB(entities, guid, true);
+                    var outputForChannel = (from output in entities.ChannelCreationInputs
+                                           where output.assetId == channel.Asset && output.valueWithoutDivisibility == channel.ContributedAmount
+                                           select output).FirstOrDefault();
+
+                    if (outputForChannel != null)
+                    {
+                        using (NodeClient client = new NodeClient(channel.Destination))
+                        {
+                            result = await client.SetupFundingTx(entities, channel,
+                                outputForChannel.transactionHex, outputForChannel.outputNumber);
+                        }
+                    }
+                    else
+                    {
+                        result = new SetupFundingTxResult { Error = "Could not find an output to use for channel creation.",
+                            Result = AcceptDeny.Deny };
+                    }
+                }
+            }
+            catch(Exception exp)
+            {
+                result = new SetupFundingTxResult { Error = exp.ToString(), Result = AcceptDeny.Deny };
+            }
+            return result;
         }
 
         public string Echo(string x)
